@@ -1,0 +1,57 @@
+set version 23.4R2-S2.1
+set system syslog file interactive-commands interactive-commands any
+set system syslog file messages any notice
+set system syslog file messages authorization info
+set system processes dhcp-service traceoptions file dhcp_logfile
+set system processes dhcp-service traceoptions file size 10m
+set system processes dhcp-service traceoptions level all
+set system processes dhcp-service traceoptions flag packet
+set interfaces ge-0/0/0 unit 0 family inet unnumbered-address lo0.0
+set interfaces ge-0/0/0 unit 0 family iso
+set interfaces ge-0/0/1 unit 0 family inet unnumbered-address lo0.0
+set interfaces ge-0/0/1 unit 0 family iso
+set interfaces ge-0/0/2 unit 0 family inet unnumbered-address lo0.0
+set interfaces ge-0/0/2 unit 0 family iso
+set interfaces ge-0/0/3 unit 0 family inet unnumbered-address lo0.0
+set interfaces ge-0/0/3 unit 0 family iso
+set interfaces fxp0 unit 0 family inet dhcp vendor-id Juniper-vmx-VM678A5C2DEF
+set interfaces fxp0 unit 0 family inet6 dhcpv6-client client-type stateful
+set interfaces fxp0 unit 0 family inet6 dhcpv6-client client-ia-type ia-na
+set interfaces fxp0 unit 0 family inet6 dhcpv6-client client-identifier duid-type duid-ll
+set interfaces fxp0 unit 0 family inet6 dhcpv6-client vendor-id Juniper:vmx:VM678A5C2DEF
+set interfaces lo0 unit 0 family inet address 10.101.0.0/32 primary
+set interfaces lo0 unit 0 family inet address 192.168.0.0/32
+set interfaces lo0 unit 0 family iso address 49.0001.0101.0100.0000.00
+set forwarding-options storm-control-profiles default all
+set policy-options policy-statement LOAD-BALANCE term 1 then load-balance per-flow
+set policy-options policy-statement LOAD-BALANCE term 1 then accept
+set policy-options policy-statement UNDERLAY term 1 from interface lo0.0
+set policy-options policy-statement UNDERLAY term 1 then accept
+set routing-options router-id 10.101.0.0
+set routing-options autonomous-system 64512
+set routing-options forwarding-table export LOAD-BALANCE
+set protocols router-advertisement interface fxp0.0 managed-configuration
+set protocols bgp group OVERLAY type internal
+set protocols bgp group OVERLAY local-address 10.101.0.0
+set protocols bgp group OVERLAY family evpn signaling
+set protocols bgp group OVERLAY cluster 10.101.0.0
+set protocols bgp group OVERLAY multipath
+set protocols bgp group OVERLAY neighbor 10.100.0.0 peer-as 64512
+set protocols bgp group OVERLAY neighbor 10.100.0.1 peer-as 64512
+set protocols bgp group OVERLAY neighbor 10.100.0.2 peer-as 64512
+set protocols bgp group OVERLAY neighbor 10.100.0.3 peer-as 64512
+set protocols isis interface ge-0/0/0.0 point-to-point
+set protocols isis interface ge-0/0/1.0 point-to-point
+set protocols isis interface ge-0/0/2.0 point-to-point
+set protocols isis interface ge-0/0/3.0 point-to-point
+set protocols isis interface lo0.0
+set protocols isis level 1 disable
+set protocols isis level 2 wide-metrics-only
+set protocols isis reference-bandwidth 400g
+set protocols pim rp local family inet address 192.168.0.0
+set protocols pim rp local family inet anycast-pim rp-set address 10.101.0.1
+set protocols pim rp local family inet anycast-pim local-address 10.101.0.0
+set protocols pim interface ge-0/0/0.0 mode sparse
+set protocols pim interface ge-0/0/1.0 mode sparse
+set protocols pim interface ge-0/0/2.0 mode sparse
+set protocols pim interface ge-0/0/3.0 mode sparse
