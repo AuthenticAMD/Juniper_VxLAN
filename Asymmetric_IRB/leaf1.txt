@@ -1,0 +1,90 @@
+set version 24.4R1.9
+set system host-name leaf1
+set system root-authentication encrypted-password "$6$W/ULMjl3$m6obR8b45moAgPlOXVsD9IjooVszqeICLL0ikO2VmK4uAKtsRlUWSPa393m07ZRCKubzN1VFJcX7fxWMS1d951"
+set system arp aging-timer 5
+set system syslog file interactive-commands interactive-commands any
+set system syslog file messages any notice
+set system syslog file messages authorization info
+set system processes dhcp-service traceoptions file dhcp_logfile
+set system processes dhcp-service traceoptions file size 10m
+set system processes dhcp-service traceoptions level all
+set system processes dhcp-service traceoptions flag packet
+set chassis aggregated-devices ethernet device-count 1
+set interfaces ge-0/0/0 unit 0 family inet unnumbered-address lo0.0
+set interfaces ge-0/0/0 unit 0 family iso
+set interfaces ge-0/0/1 unit 0 family inet unnumbered-address lo0.0
+set interfaces ge-0/0/1 unit 0 family iso
+set interfaces ge-0/0/2 ether-options 802.3ad ae0
+set interfaces ae0 esi 00:01:01:01:01:01:01:01:01:01
+set interfaces ae0 esi all-active
+set interfaces ae0 aggregated-ether-options lacp active
+set interfaces ae0 aggregated-ether-options lacp system-id 00:01:01:01:01:01
+set interfaces ae0 unit 0 family ethernet-switching interface-mode trunk
+set interfaces ae0 unit 0 family ethernet-switching vlan members v101
+set interfaces fxp0 unit 0 family inet dhcp vendor-id Juniper-ex9214-VM6792A733F1
+set interfaces fxp0 unit 0 family inet6 dhcpv6-client client-type stateful
+set interfaces fxp0 unit 0 family inet6 dhcpv6-client client-ia-type ia-na
+set interfaces fxp0 unit 0 family inet6 dhcpv6-client client-identifier duid-type duid-ll
+set interfaces fxp0 unit 0 family inet6 dhcpv6-client vendor-id Juniper:ex9214:VM6792A733F1
+set interfaces irb unit 101 family inet address 10.1.101.1/24
+set interfaces irb unit 101 mac 00:00:5e:00:53:01
+set interfaces irb unit 102 family inet address 10.1.102.1/24
+set interfaces irb unit 102 mac 00:00:5e:00:53:01
+set interfaces irb unit 103 family inet address 10.1.103.1/24
+set interfaces irb unit 103 mac 00:00:5e:00:53:01
+set interfaces lo0 unit 0 family inet address 10.100.0.0/32
+set interfaces lo0 unit 0 family iso address 49.0001.0101.0000.0000.00
+set multi-chassis mc-lag consistency-check
+set policy-options policy-statement LOAD-BALANCING-POLICY then load-balance per-packet
+set policy-options policy-statement SEND-DIRECT term 1 from protocol direct
+set policy-options policy-statement SEND-DIRECT term 1 from route-filter 10.100.0.0/32 exact
+set policy-options policy-statement SEND-DIRECT term 1 then accept
+set routing-instances vrf101 instance-type vrf
+set routing-instances vrf101 interface irb.101
+set routing-instances vrf101 interface irb.102
+set routing-instances vrf101 interface irb.103
+set routing-instances vrf101 route-distinguisher 10.100.0.0:101
+set routing-instances vrf101 vrf-target target:1001:1
+set routing-options router-id 10.100.0.0
+set routing-options autonomous-system 64512
+set routing-options forwarding-table export LOAD-BALANCING-POLICY
+set protocols router-advertisement interface fxp0.0 managed-configuration
+set protocols bgp group OVERLAY type internal
+set protocols bgp group OVERLAY family evpn signaling
+set protocols bgp group OVERLAY local-as 64512
+set protocols bgp group OVERLAY multipath
+set protocols bgp group OVERLAY neighbor 10.101.0.0
+set protocols bgp group OVERLAY neighbor 10.101.0.1
+set protocols bgp group OVERLAY vpn-apply-export
+set protocols evpn encapsulation vxlan
+set protocols evpn default-gateway do-not-advertise
+set protocols evpn multicast-mode ingress-replication
+set protocols evpn vni-options vni 101 vrf-target target:101:1
+set protocols evpn vni-options vni 102 vrf-target target:102:1
+set protocols evpn vni-options vni 103 vrf-target target:103:1
+set protocols evpn extended-vni-list all
+set protocols isis interface ge-0/0/0.0 point-to-point
+set protocols isis interface ge-0/0/1.0 point-to-point
+set protocols isis interface lo0.0
+set protocols isis level 1 disable
+set protocols isis level 2 wide-metrics-only
+set protocols isis export SEND-DIRECT
+set protocols isis reference-bandwidth 400g
+set protocols pim rp static address 192.168.0.0
+set protocols pim interface ge-0/0/0.0
+set protocols pim interface ge-0/0/1.0
+set protocols lldp interface all
+set protocols lldp-med interface all
+set switch-options vtep-source-interface lo0.0
+set switch-options route-distinguisher 10.100.0.0:1
+set switch-options vrf-target target:1:1
+set switch-options vrf-target auto
+set vlans v101 vlan-id 101
+set vlans v101 l3-interface irb.101
+set vlans v101 vxlan vni 101
+set vlans v102 vlan-id 102
+set vlans v102 l3-interface irb.102
+set vlans v102 vxlan vni 102
+set vlans v103 vlan-id 103
+set vlans v103 l3-interface irb.103
+set vlans v103 vxlan vni 103
